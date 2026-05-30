@@ -91,7 +91,19 @@ jobs:
     - name: Cleanup
       uses: rokibhasansagar/slimhub_actions@main
       # That's it! Now use your normal steps
-
+      
+    - name: Free Disk Space (Очистка места на диске)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # We disable what we definitely don’t need for building the recovery.
+        tool-cache: true
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap: false 
+        
     - name: Prepare the environment
       run: |
         sudo apt update && sudo apt upgrade -y
