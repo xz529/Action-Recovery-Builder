@@ -124,6 +124,19 @@ jobs:
         git config --global user.name "Nico170420"
         git config --global user.email "b170420nc@gmail.com"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
+
+        # --- ADDING MISSING PROJECTS TO THE LOCAL MANIFEST ---
+        # Create a folder for local manifest edits if it doesn't exist.
+        mkdir -p .repo/local_manifests
+
+        # We register guava and gflags directly from Google AOSP so that they are downloaded
+        cat <<EOF > .repo/local_manifests/missing_deps.xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <manifest>
+        <project path="external/guava" name="platform/external/guava" remote="aosp" revision="refs/tags/android-14.0.0_r67" />
+        <project path="external/gflags" name="platform/external/gflags" remote="aosp" revision="refs/tags/android-14.0.0_r67" />
+        </manifest>
+        EOF
       id: pwd
           
     - name: Repo Sync
@@ -131,14 +144,6 @@ jobs:
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
 
-    - name: Workaround for missing repo projects.
-      run: |
-        repo sync external/gflags
-        repo sync external/guava
-        repo sync hardware/google/interfaces
-        repo sync hardware/google/pixel
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      
     - name: Clone device tree
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
