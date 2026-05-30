@@ -159,7 +159,7 @@ jobs:
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 50
+        swap-size-gb: 24
     
     - name: Apply custom diff.patch
       if: github.event.inputs.APPLY_PATCH == 'true'
