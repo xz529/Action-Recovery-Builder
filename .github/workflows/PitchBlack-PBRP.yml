@@ -129,6 +129,14 @@ jobs:
       run: |
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
+
+    - name: Workaround for missing repo projects.
+      run: |
+        repo sync external/gflags
+        repo sync external/guava
+        repo sync hardware/google/interfaces
+        repo sync hardware/google/pixel
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
       
     - name: Clone device tree
       run: |
