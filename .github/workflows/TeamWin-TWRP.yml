@@ -67,7 +67,7 @@ on:
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -172,9 +172,9 @@ jobs:
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        export SOONG_ALLOW_MISSING_DEPENDENCIES=true
-        export BUILD_BROKEN_MISSING_REQUIRED_MODULES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        export _JAVA_OPTIONS="-Xmx4g"
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka ${{ github.event.inputs.BUILD_TARGET }}image -j2
+        #-j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Assembling the installer
