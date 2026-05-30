@@ -134,7 +134,6 @@ jobs:
         <?xml version="1.0" encoding="UTF-8"?>
         <manifest>
         <project path="external/guava" name="platform/external/guava" remote="aosp" revision="refs/tags/android-14.0.0_r67" />
-        <project path="external/gflags" name="platform/external/gflags" remote="aosp" revision="refs/tags/android-14.0.0_r67" />
         </manifest>
         EOF
       id: pwd
