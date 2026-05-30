@@ -190,10 +190,11 @@ jobs:
 
     - name: Assembling the installer
       run: |
-        cp out/target/product/${{ github.event.inputs.DEVICE_NAME }}/./ramdisk-recovery.cpio recovery/installer
+        cp out/target/product/${{ github.event.inputs.DEVICE_NAME }}/./vendor_boot.img recovery/installer
         cd recovery/installer
         zip -r TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-Instaling.zip z .
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
       
     - name: Check the output directory before uploading
       run: |
