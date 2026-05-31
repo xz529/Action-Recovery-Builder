@@ -58,7 +58,7 @@ on:
       APPLY_PATCH:
         description: 'Apply diff.patch'
         required: true
-        default: 'no'
+        default: 'false'
         type: choice
         options:
         - yes
@@ -250,6 +250,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
           workspace/recovery/installer/TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-Instaling.zip
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk*
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/vendor*.img
         name: TeamWin-TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
