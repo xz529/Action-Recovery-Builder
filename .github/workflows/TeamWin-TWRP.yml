@@ -190,11 +190,52 @@ jobs:
 
     - name: Assembling the installer
       run: |
-        cp out/target/product/${{ github.event.inputs.DEVICE_NAME }}/./vendor_boot.img recovery/installer
-        cd recovery/installer
-        zip -r TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-Instaling.zip z .
+        PRODUCT_OUT="out/target/product/${{ github.event.inputs.DEVICE_NAME }}"
+        INSTALLER_DIR="recovery/installer"
+
+        # Paths to pre-built ramdisks in the Android build structure
+        BOOT_RAMDISK="$PRODUCT_OUT/ramdisk.cpio"
+        RECOVERY_RAMDISK="$PRODUCT_OUT/utilities/ramdisk-recovery.cpio"
+        # Alternative way for some versions of TWRP/OmniROM
+        ALT_RECOVERY_RAMDISK="out/target/product/${{ github.event.inputs.DEVICE_NAME }}/obj/PACKAGING/recovery_ramdisk_intermediates/ramdisk-recovery.cpio"
+
+        if [ -f "$PRODUCT_OUT/vendor_boot.img" ]; then
+            echo "=== VENDOR_BOOT DETECTED ==="
+            echo "Action: Copying full ready vendor_boot.img..."
+            cp "$PRODUCT_OUT/vendor_boot.img" "$INSTALLER_DIR/vendor_boot.img"
+
+        elif [ -f "$PRODUCT_OUT/recovery.img" ]; then
+            echo "=== DEDICATED RECOVERY DETECTED ==="
+            echo "Action: Looking for recovery ramdisk.cpio..."
+            if [ -f "$RECOVERY_RAMDISK" ]; then
+                cp "$RECOVERY_RAMDISK" "$INSTALLER_DIR/ramdisk-twrp.cpio"
+            elif [ -f "$ALT_RECOVERY_RAMDISK" ]; then
+                cp "$ALT_RECOVERY_RAMDISK" "$INSTALLER_DIR/ramdisk-twrp.cpio"
+            else
+                echo "Warning: recovery .cpio not found, falling back to full recovery.img"
+                cp "$PRODUCT_OUT/recovery.img" "$INSTALLER_DIR/recovery.img"
+            fi
+
+        elif [ -f "$PRODUCT_OUT/boot.img" ]; then
+            echo "=== LEGACY A/B BOOT DETECTED ==="
+            echo "Action: Looking for boot ramdisk.cpio..."
+            if [ -f "$BOOT_RAMDISK" ]; then
+                cp "$BOOT_RAMDISK" "$INSTALLER_DIR/ramdisk-twrp.cpio"
+            else
+                echo "Warning: boot .cpio not found, falling back to full recovery.img"
+                cp "$PRODUCT_OUT/boot.img" "$INSTALLER_DIR/recovery.img"
+            fi
+        else
+            echo "ERROR: No built target found in $PRODUCT_OUT!"
+            exit 1
+        fi
+
+        # Go to the installer folder and create the final ZIP
+        cd "$INSTALLER_DIR"
+        zip -r9 ../../TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-Installing.zip ./*
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
       continue-on-error: true
+
       
     - name: Check the output directory before uploading
       run: |
