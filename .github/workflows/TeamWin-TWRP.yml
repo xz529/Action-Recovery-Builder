@@ -49,12 +49,12 @@ on:
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
-        default: 'vendor_boot'
+        default: 'vendorboot'
         type: choice
         options:
         - 'boot'
         - 'recovery'
-        - 'vendor_boot'
+        - 'vendorboot'
       APPLY_PATCH:
         description: 'Apply diff.patch'
         required: true
@@ -248,6 +248,7 @@ jobs:
       with:
         files: | 
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*boot*.img
           workspace/recovery/installer/TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-Instaling.zip
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk*
         name: TeamWin-TWRP-${{ github.event.inputs.DEPLOY_TYPE }}-${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
