@@ -162,7 +162,7 @@ jobs:
 
     - name: Clone recovery installer
       run: |
-        git clone https://github.com/tecno-mt6768/twrp_abtemplate ./recovery/installer
+        git clone https://github.com/xz529/twrp_abtemplate ./recovery/installer
         cd recovery/installer
         sudo rm -rf .git
         sudo rm -rf .github
@@ -176,7 +176,7 @@ jobs:
     - name: Apply custom diff.patch
       if: github.event.inputs.APPLY_PATCH == 'true'
       run: |
-        bash ${GITHUB_WORKSPACE}/workspace/${{ github.event.inputs.DEVICE_PATH }}/patches/apply-patches.sh
+        bash ${GITHUB_WORKSPACE}/workspace/${{ github.event.inputs.DEVICE_PATH }}/patches/*.sh
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
       continue-on-error: true
 
